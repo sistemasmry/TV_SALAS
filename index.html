@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReadMind - Video</title>
+
+<style>
+    /* =========================================================
+       VARIABLES DE CONFIGURACIÓN (¡Modifica estos valores!)
+       ========================================================= */
+    :root {
+        /* 1. TAMAÑO Y POSICIÓN */
+        --ancho-video: 400px; 
+        --distancia-barra: 40px;
+
+        /* 2. SOMBRA DEL VIDEO */
+        --sombra-video: 0px 10px 30px rgba(0, 0, 0, 0.5);
+
+        /* 3. FONDO DEGRADÉ / TORNASOLADO ANIMADO */
+        --color-arriba: #0898da; /* Azul claro */
+        --color-abajo: #001B4D;  /* Azul oscuro */
+        --velocidad-fondo: 6s;   /* Qué tan rápido se mueve el degradé (ej: 4s, 8s) */
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        margin: 0;
+        width: 100%;
+        min-height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding: 20px 16px;
+        
+        /* 
+           Se crea el degradé (linear-gradient) de arriba (0deg o 180deg) a abajo.
+           Se hace que el fondo sea el doble de alto (200%) para poder moverlo.
+        */
+        background: linear-gradient(180deg, var(--color-arriba), var(--color-abajo));
+        background-size: 100% 200%;
+        animation: moverFondo var(--velocidad-fondo) ease-in-out infinite alternate;
+    }
+
+    /* Keyframes que mueven la posición del fondo para crear el efecto tornasolado */
+    @keyframes moverFondo {
+        0% {
+            background-position: 50% 0%; /* Muestra la parte superior del degradé */
+        }
+        100% {
+            background-position: 50% 100%; /* Muestra la parte inferior del degradé */
+        }
+    }
+
+    /* Contenedor principal ajustado con la variable */
+    .player {
+        width: min(100%, var(--ancho-video));
+    }
+
+    /* Área blanca donde se reproduce el video */
+    .video-container {
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        background: #FFFFFF;
+        border-radius: 19px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        
+        /* Aplica la sombra usando la variable */
+        box-shadow: var(--sombra-video);
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        background: #FFFFFF;
+    }
+
+    /* Barra de progreso ajustada con la variable */
+    .progress-area {
+        margin-top: var(--distancia-barra);
+        width: 100%;
+        position: relative;
+        z-index: 10;
+    }
+
+    .progress {
+        width: 100%;
+        height: 4px;
+        display: block;
+        margin: 0;
+        padding: 0;
+        appearance: none;
+        -webkit-appearance: none;
+        background: #D2D2D2;
+        border-radius: 0;
+        outline: none;
+        cursor: pointer;
+    }
+
+    /* Chrome / Edge / Safari */
+    .progress::-webkit-slider-runnable-track {
+        height: 3px;
+        background: linear-gradient(
+            to right,
+            #0878FF 0%,
+            #0878FF var(--progress, 0%),
+            #D2D2D2 var(--progress, 0%),
+            #D2D2D2 100%
+        );
+    }
+
+    .progress::-webkit-slider-thumb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 17px;
+        height: 17px;
+        margin-top: -7px;
+        border: none;
+        border-radius: 50%;
+        background: #0878FF;
+        cursor: grab;
+    }
+
+    .progress::-webkit-slider-thumb:active {
+        cursor: grabbing;
+    }
+
+    /* Firefox */
+    .progress::-moz-range-track {
+        height: 3px;
+        background: #D2D2D2;
+    }
+
+    .progress::-moz-range-progress {
+        height: 3px;
+        background: #0878FF;
+    }
+
+    .progress::-moz-range-thumb {
+        width: 17px;
+        height: 17px;
+        border: none;
+        border-radius: 50%;
+        background: #0878FF;
+        cursor: grab;
+    }
+
+    .time {
+        margin-top: 8px;
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 16px;
+        line-height: 20px;
+        font-weight: 400;
+        text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Botones */
+    .buttons-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 25px;
+        width: 100%;
+    }
+
+    .contact-btn {
+        text-decoration: none;
+        color: #FFFFFF;
+        font-size: 15px;
+        font-weight: bold;
+        padding: 12px 0;
+        border-radius: 25px;
+        text-align: center;
+        flex: 1;
+        max-width: 160px;
+        transition: background 0.2s, transform 0.1s;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .contact-btn:active {
+        transform: scale(0.95);
+    }
+
+    .btn-email {
+        background: #0878FF;
+    }
+    .btn-email:hover {
+        background: #0063d1;
+    }
+
+    .btn-phone {
+        background: #0878FF;
+    }
+    .btn-phone:hover {
+        background: #0063d1;
+    }
+
+    @media (max-width: 360px) {
+        body {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        .buttons-area {
+            gap: 10px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="player">
+
+    <div class="video-container" id="videoContainer">
+        <!-- Colocá tu archivo como "video.mp4" en la misma carpeta que este HTML -->
+        <video id="video" preload="metadata" playsinline>
+            <source src="video.mp4" type="video/mp4">
+            Tu navegador no puede reproducir este video.
+        </video>
+    </div>
+
+    <div class="progress-area">
+        <input
+            type="range"
+            id="progress"
+            class="progress"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            aria-label="Barra de progreso del video"
+        >
+
+        <div class="time" id="time">0:00 / 0:00</div>
+    </div>
+
+    <div class="buttons-area">
+        <a href="mailto:mda@aerolineas.com.ar" class="contact-btn btn-email">Email</a>
+        <a href="tel:37238400" class="contact-btn btn-phone">Llamar</a>
+    </div>
+
+</div>
+
+<script>
+    const video = document.getElementById("video");
+    const videoContainer = document.getElementById("videoContainer");
+    const progress = document.getElementById("progress");
+    const time = document.getElementById("time");
+
+    // Reproducir / pausar al tocar o hacer clic sobre el video
+    videoContainer.addEventListener("click", () => {
+        if (video.paused) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    });
+
+    // Actualizar la barra mientras se reproduce
+    video.addEventListener("timeupdate", () => {
+        if (!video.duration) return;
+
+        const percentage = (video.currentTime / video.duration) * 100;
+        progress.value = percentage;
+        progress.style.setProperty("--progress", percentage + "%");
+
+        updateTime();
+    });
+
+    // Permitir mover la barra a cualquier posición
+    progress.addEventListener("input", () => {
+        if (!video.duration) return;
+
+        const newTime = (progress.value / 100) * video.duration;
+        video.currentTime = newTime;
+
+        progress.style.setProperty("--progress", progress.value + "%");
+        updateTime();
+    });
+
+    // Mostrar duración cuando el video esté cargado
+    video.addEventListener("loadedmetadata", () => {
+        updateTime();
+        progress.style.setProperty("--progress", "0%");
+    });
+
+    // Al finalizar vuelve a quedar en el final
+    video.addEventListener("ended", () => {
+        progress.value = 100;
+        progress.style.setProperty("--progress", "100%");
+        updateTime();
+    });
+
+    function formatTime(seconds) {
+        if (!Number.isFinite(seconds)) return "0:00";
+
+        seconds = Math.floor(seconds);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+
+        return minutes + ":" + String(remainingSeconds).padStart(2, "0");
+    }
+
+    function updateTime() {
+        time.textContent =
+            formatTime(video.currentTime) +
+            " / " +
+            formatTime(video.duration);
+    }
+</script>
+
+</body>
+</html>
